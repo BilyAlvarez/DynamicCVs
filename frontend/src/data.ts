@@ -1,0 +1,84 @@
+import type { CVData, Paleta } from './types';
+
+export const emptyCV: CVData = {
+  datosPersonales: {
+    nombre: '',
+    cedula: '',
+    ciudad: '',
+    telefono: '',
+    correo: '',
+  },
+  perfil: {
+    titulo: '',
+    resumen: '',
+  },
+  formacion: [],
+  experiencia: [],
+  competencias: [],
+  habilidadesTecnicas: [],
+  idiomas: [],
+  certificaciones: [],
+};
+
+export const PALETAS: Paleta[] = [
+  {
+    id: 'teal-coral',
+    name: 'Teal & Coral',
+    colors: {
+      primary: '#00838F',
+      accent: '#FF7043',
+      background: '#F8F9FA',
+      text: '#212121',
+      sidebar: '#006064',
+      textLight: '#FFFFFF',
+    },
+  },
+  {
+    id: 'bosque-mostaza',
+    name: 'Bosque & Mostaza',
+    colors: {
+      primary: '#2E7D32',
+      accent: '#FFB300',
+      background: '#F4F6F4',
+      text: '#1B1B1B',
+      sidebar: '#1B5E20',
+      textLight: '#FFFFFF',
+    },
+  },
+  {
+    id: 'grafito-turquesa',
+    name: 'Grafito & Turquesa',
+    colors: {
+      primary: '#37474F',
+      accent: '#26C6DA',
+      background: '#F5F5F5',
+      text: '#212121',
+      sidebar: '#212121',
+      textLight: '#FFFFFF',
+    },
+  },
+  {
+    id: 'vino-oro',
+    name: 'Vino & Oro',
+    colors: {
+      primary: '#6D1A36',
+      accent: '#D4AF37',
+      background: '#F9F6F2',
+      text: '#1A1A1A',
+      sidebar: '#5A1428',
+      textLight: '#FFFFFF',
+    },
+  },
+  {
+    id: 'indigo-ambar',
+    name: 'Índigo & Ámbar',
+    colors: {
+      primary: '#283593',
+      accent: '#FFB300',
+      background: '#F3F4F8',
+      text: '#1A1A1A',
+      sidebar: '#1A237E',
+      textLight: '#FFFFFF',
+    },
+  },
+];

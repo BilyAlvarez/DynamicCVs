@@ -21,3 +21,5 @@ Thumbs.db
 AGENTS.md
 docs/
 *.pdf
+# Typescript build info
+tsconfig.tsbuildinfo
