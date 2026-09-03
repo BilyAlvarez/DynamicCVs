@@ -47,6 +47,3 @@ cd backend  && npm test   # integración de API (node:test + supertest)
 - POST /generate/pdf
 - POST /generate/word
 
-## Agents
-
-Ver AGENTS.md para roles y flujos de trabajo.
