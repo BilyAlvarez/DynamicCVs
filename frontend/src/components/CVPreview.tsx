@@ -1,135 +1,164 @@
-import type { CVData, Paleta } from '../types';
+import type { CVData, Paleta, PlantillaId, Tipografia } from '../types';
+import { TIPOGRAFIAS } from '../data';
+import { useLang } from '../i18n/LanguageContext';
 import Icon from './Icon';
+import { formatCedula } from '../utils/format';
 
 interface Props {
   data: CVData;
   paleta: Paleta;
+  plantilla: PlantillaId;
+  tipografia: Tipografia;
 }
 
-export default function CVPreview({ data, paleta }: Props) {
+export default function CVPreview({ data, paleta, plantilla, tipografia }: Props) {
+  const { t } = useLang();
   const c = paleta.colors;
   const d = data;
+  const fontFamily = TIPOGRAFIAS.find((f) => f.id === tipografia)?.family;
+
+  const isHarvard = plantilla === 'harvard';
+
+  interface SidebarItem {
+    text: string;
+    strong?: string;
+    icon?: string;
+  }
+
+const contactItems: SidebarItem[] = [
+    ...(d.datosPersonales.ciudad ? [{ icon: 'ciudad', text: d.datosPersonales.ciudad }] : []),
+    ...(d.datosPersonales.telefono ? [{ icon: 'telefono', text: d.datosPersonales.telefono }] : []),
+    ...(d.datosPersonales.correo ? [{ icon: 'correo', text: d.datosPersonales.correo }] : []),
+    ...(d.datosPersonales.sitioWeb ? [{ icon: 'web', text: d.datosPersonales.sitioWeb }] : []),
+    ...(d.datosPersonales.cedula
+      ? [{ icon: 'cedula', text: formatCedula(d.datosPersonales.cedula) }]
+      : []),
+  ];
+
+  const skills = d.competencias;
+  const techSkills = d.habilidadesTecnicas;
+  const languages = d.idiomas;
+  const certs = d.certificaciones;
+
+  const sidebarBlocks: { title: string; items: SidebarItem[] }[] = [
+    { title: t.cv.contact, items: contactItems },
+    { title: t.cv.competencies, items: skills.map((s) => ({ text: s })) },
+    {
+      title: t.cv.technicalSkills,
+      items: techSkills.map((h) => ({
+        text: h.herramienta + (h.descripcion ? ` — ${h.descripcion}` : ''),
+        strong: h.herramienta,
+      })),
+    },
+    {
+      title: t.cv.languages,
+      items: languages.map((l) => ({ text: `${l.nombre} ${l.nivel}` })),
+    },
+    { title: t.cv.certifications, items: certs.map((crt) => ({ text: crt.curso })) },
+  ].filter((b) => b.items.length);
+
+  const contentTitle = (txt: string) =>
+    isHarvard ? (
+      <h3 className="cv-block-title" style={{ color: '#111111', borderColor: '#111111' }}>
+        {txt}
+      </h3>
+    ) : (
+      <h3 className="cv-block-title" style={{ color: c.primary, borderColor: c.primary }}>
+        {txt}
+      </h3>
+    );
+
+  const sidebarHeader = isHarvard ? (
+    <div className="cv-banner-simple" style={{ borderBottom: `3px solid #111111` }}>
+      <h1 className="cv-name" style={{ color: '#111' }}>
+        {d.datosPersonales.nombre || t.cv.namePlaceholder}
+      </h1>
+      {d.perfil.titulo && <p className="cv-title" style={{ color: '#333' }}>{d.perfil.titulo}</p>}
+    </div>
+  ) : (
+    <div className="cv-banner" style={{ backgroundColor: c.sidebar, color: c.textLight }}>
+      <h1 className="cv-name">{d.datosPersonales.nombre || t.cv.namePlaceholder}</h1>
+      {d.perfil.titulo && <p className="cv-title">{d.perfil.titulo}</p>}
+    </div>
+  );
 
   return (
-    <div className="cv" style={{ backgroundColor: c.background, color: c.text }}>
-      <div className="cv-banner" style={{ backgroundColor: c.sidebar, color: c.textLight }}>
-        <h1 className="cv-name">{d.datosPersonales.nombre || 'Nombre Completo'}</h1>
-        {d.perfil.titulo && <p className="cv-title">{d.perfil.titulo}</p>}
-        <div className="cv-contact">
-          {d.datosPersonales.ciudad && (
-            <span>
-              <Icon name="ciudad" size={13} />
-              {d.datosPersonales.ciudad}
-            </span>
-          )}
-          {d.datosPersonales.telefono && (
-            <span>
-              <Icon name="telefono" size={13} />
-              {d.datosPersonales.telefono}
-            </span>
-          )}
-          {d.datosPersonales.correo && (
-            <span>
-              <Icon name="correo" size={13} />
-              {d.datosPersonales.correo}
-            </span>
-          )}
-          {d.datosPersonales.cedula && (
-            <span>
-              <Icon name="cedula" size={13} />
-              C.I. {d.datosPersonales.cedula}
-            </span>
-          )}
-        </div>
-      </div>
+    <div
+      className={'cv' + (isHarvard ? ' cv-harvard' : '')}
+      style={{ backgroundColor: isHarvard ? '#FFFFFF' : c.background, color: '#111', fontFamily }}
+    >
+      {sidebarHeader}
 
       <div className="cv-body">
-        <div className="cv-sidebar" style={{ backgroundColor: c.primary, color: c.textLight }}>
-          {d.competencias.length > 0 && (
-            <div className="cv-block">
-              <h3 className="cv-block-title" style={{ color: c.accent }}>
-                Competencias
-              </h3>
-              <ul className="cv-list">
-                {d.competencias.map((comp) => (
-                  <li key={comp}>{comp}</li>
-                ))}
-              </ul>
+        <div
+          className="cv-sidebar"
+          style={
+            isHarvard
+              ? { backgroundColor: '#FFFFFF', color: '#111', borderRight: '1px solid #ccc' }
+              : { backgroundColor: c.primary, color: c.textLight }
+          }
+        >
+          {sidebarBlocks.map((block, i) => (
+            <div className="cv-block" key={i}>
+              {isHarvard ? (
+                <h3 className="cv-block-title" style={{ color: '#111', borderColor: '#111' }}>
+                  {block.title}
+                </h3>
+              ) : (
+                <h3 className="cv-block-title" style={{ color: c.accent, borderColor: c.accent }}>
+                  {block.title}
+                </h3>
+              )}
+              {block.title === t.cv.contact ? (
+                <ul className="cv-contact-list">
+                  {block.items.map((it, idx) => (
+                    <li key={idx}>
+                      {it.icon && <Icon name={it.icon} size={13} />}
+                      <span>{it.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <ul className="cv-list">
+                  {block.items.map((it, idx) => (
+                    <li key={idx}>
+                      {it.strong ? (
+                        <>
+                          <strong>{it.strong}</strong>
+                          <div className="cv-muted">{it.text.replace(it.strong + ' — ', '')}</div>
+                        </>
+                      ) : (
+                        it.text
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          )}
-
-          {d.habilidadesTecnicas.length > 0 && (
-            <div className="cv-block">
-              <h3 className="cv-block-title" style={{ color: c.accent }}>
-                Habilidades técnicas
-              </h3>
-              <ul className="cv-list">
-                {d.habilidadesTecnicas.map((h, i) => (
-                  <li key={i}>
-                    <strong>{h.herramienta}</strong>
-                    {h.descripcion && ` — ${h.descripcion}`}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {d.idiomas.length > 0 && (
-            <div className="cv-block">
-              <h3 className="cv-block-title" style={{ color: c.accent }}>
-                Idiomas
-              </h3>
-              <ul className="cv-list">
-                {d.idiomas.map((id, i) => (
-                  <li key={i}>
-                    {id.nombre} <span className="cv-muted">{id.nivel}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {d.certificaciones.length > 0 && (
-            <div className="cv-block">
-              <h3 className="cv-block-title" style={{ color: c.accent }}>
-                Certificaciones
-              </h3>
-              <ul className="cv-list">
-                {d.certificaciones.map((cert, i) => (
-                  <li key={i}>
-                    <strong>{cert.curso}</strong>
-                    {cert.institucion && <div className="cv-muted">{cert.institucion}</div>}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          ))}
         </div>
 
         <div className="cv-content">
           {d.perfil.resumen && (
             <div className="cv-block">
-              <h3 className="cv-block-title" style={{ color: c.primary }}>
-                Perfil
-              </h3>
+              {contentTitle(t.cv.profile)}
               <p>{d.perfil.resumen}</p>
             </div>
           )}
 
           {d.experiencia.length > 0 && (
             <div className="cv-block">
-              <h3 className="cv-block-title" style={{ color: c.primary }}>
-                Experiencia laboral
-              </h3>
+              {contentTitle(t.cv.experience)}
               {d.experiencia.map((e, i) => (
                 <div key={i} className="cv-entry">
                   <h4>
+                    {isHarvard && <span className="cv-date">{e.fechas}</span>}
                     {e.cargo}
                     {e.empresa && <span className="cv-muted"> — {e.empresa}</span>}
+                    {!isHarvard && e.fechas && <span className="cv-muted cv-inline-date"> · {e.fechas}</span>}
                   </h4>
                   <div className="cv-muted">
                     {e.ciudad}
-                    {e.fechas && ` · ${e.fechas}`}
                   </div>
                   {e.funciones.length > 0 && (
                     <ul className="cv-bullets">
@@ -143,19 +172,21 @@ export default function CVPreview({ data, paleta }: Props) {
 
           {d.formacion.length > 0 && (
             <div className="cv-block">
-              <h3 className="cv-block-title" style={{ color: c.primary }}>
-                Formación
-              </h3>
+              {contentTitle(t.cv.education)}
               {d.formacion.map((f, i) => (
                 <div key={i} className="cv-entry">
                   <h4>
+                    {isHarvard && <span className="cv-date">{f.anioInicio} — {f.enCurso ? t.cv.inProgress : f.anioFin}</span>}
                     {f.titulo}
                     {f.institucion && <span className="cv-muted"> — {f.institucion}</span>}
+                    {!isHarvard && (
+                      <span className="cv-muted cv-inline-date">
+                        {' · '}
+                        {f.anioInicio}
+                        {f.enCurso ? ' — ' + t.cv.inProgress : f.anioFin && ` — ${f.anioFin}`}
+                      </span>
+                    )}
                   </h4>
-                  <div className="cv-muted">
-                    {f.anioInicio}
-                    {f.enCurso ? ' — En curso' : f.anioFin && ` — ${f.anioFin}`}
-                  </div>
                 </div>
               ))}
             </div>

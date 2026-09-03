@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useLang } from '../i18n/LanguageContext';
 
 export default function Repeatable({
   children,
@@ -11,6 +12,7 @@ export default function Repeatable({
   onRemove: () => void;
   addLabel: string;
 }) {
+  const { t } = useLang();
   return (
     <div className="repeatable">
       {children}
@@ -19,7 +21,7 @@ export default function Repeatable({
           + {addLabel}
         </button>
         <button type="button" className="btn btn-remove" onClick={onRemove}>
-          Eliminar
+          {t.form.remove}
         </button>
       </div>
     </div>

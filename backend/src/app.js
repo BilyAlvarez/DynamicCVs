@@ -17,12 +17,15 @@ const validData = (d) =>
   typeof d.datosPersonales === 'object';
 
 app.post('/generate/pdf', async (req, res) => {
-  const { data, paleta } = req.body || {};
+  const { data, paleta, settings } = req.body || {};
   if (!validData(data)) {
     return res.status(400).json({ error: 'Datos de CV inválidos' });
   }
   try {
-    const pdf = await generatePdf(data, paleta);
+    const pdf = await generatePdf(data, paleta, {
+      plantilla: settings?.plantilla || 'karilyn',
+      tipografia: settings?.tipografia || 'sans',
+    });
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="cv.pdf"');
     return res.send(pdf);

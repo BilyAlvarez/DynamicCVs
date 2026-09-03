@@ -20,6 +20,5 @@ Thumbs.db
 # Documentacion interna (no versionar)
 AGENTS.md
 docs/
-*.pdf
 # Typescript build info
 tsconfig.tsbuildinfo

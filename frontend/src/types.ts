@@ -1,9 +1,16 @@
+export type PlantillaId = 'karilyn' | 'harvard';
+export type ModoEntrada = 'form' | 'wizard';
+export type Idioma = 'es' | 'en';
+export type Tipografia = 'sans' | 'serif' | 'mono';
+
 export interface DatosPersonales {
   nombre: string;
   cedula: string;
   ciudad: string;
   telefono: string;
   correo: string;
+  direccion?: string;
+  sitioWeb?: string;
 }
 
 export interface Perfil {
@@ -36,7 +43,7 @@ export interface HabilidadTecnica {
   descripcion: string;
 }
 
-export interface Idioma {
+export interface IdiomaNivel {
   nombre: string;
   nivel: string;
 }
@@ -53,7 +60,7 @@ export interface CVData {
   experiencia: Experiencia[];
   competencias: string[];
   habilidadesTecnicas: HabilidadTecnica[];
-  idiomas: Idioma[];
+  idiomas: IdiomaNivel[];
   certificaciones: Certificacion[];
 }
 
@@ -68,4 +75,17 @@ export interface Paleta {
     sidebar: string;
     textLight: string;
   };
+}
+
+export interface CVSettings {
+  paleta: Paleta | null;
+  plantilla: PlantillaId;
+  tipografia: Tipografia;
+  idioma: Idioma;
+  modo: ModoEntrada;
+}
+
+export interface PersistedState {
+  data: CVData;
+  settings: CVSettings;
 }

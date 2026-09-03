@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
+import { LanguageProvider } from '../../src/i18n/LanguageContext';
 import CVPreview from '../../src/components/CVPreview';
 import type { CVData } from '../../src/types';
 import { PALETAS } from '../../src/data';
@@ -34,18 +35,26 @@ describe('CVPreview', () => {
   afterEach(() => cleanup());
 
   it('renderiza datos personales y perfil', () => {
-    render(<CVPreview data={data} paleta={PALETAS[0]} />);
+    render(
+      <LanguageProvider>
+        <CVPreview data={data} paleta={PALETAS[0]} plantilla="karilyn" tipografia="sans" />
+      </LanguageProvider>
+    );
     expect(screen.getByText('Ana Pérez')).toBeTruthy();
     expect(screen.getByText('Diseñadora UX')).toBeTruthy();
     expect(screen.getByText(/C.I. 12345678/)).toBeTruthy();
   });
 
   it('renderiza secciones de contenido y sidebar', () => {
-    render(<CVPreview data={data} paleta={PALETAS[0]} />);
+    render(
+      <LanguageProvider>
+        <CVPreview data={data} paleta={PALETAS[0]} plantilla="karilyn" tipografia="sans" />
+      </LanguageProvider>
+    );
     expect(screen.getByText('Experiencia laboral')).toBeTruthy();
     expect(screen.getByText('Competencias')).toBeTruthy();
     expect(screen.getByText('Creatividad')).toBeTruthy();
-    expect(screen.getByText('Inglés')).toBeTruthy();
+    expect(screen.getByText('Inglés B2')).toBeTruthy();
   });
 
   it('muestra placeholder para datos vacios', () => {
@@ -53,7 +62,11 @@ describe('CVPreview', () => {
       ...data,
       datosPersonales: { nombre: '', cedula: '', ciudad: '', telefono: '', correo: '' },
     };
-    render(<CVPreview data={empty} paleta={PALETAS[0]} />);
-    expect(screen.getByText('Nombre Completo')).toBeTruthy();
+    render(
+      <LanguageProvider>
+        <CVPreview data={empty} paleta={PALETAS[0]} plantilla="karilyn" tipografia="sans" />
+      </LanguageProvider>
+    );
+    expect(screen.getByText('Nombre completo')).toBeTruthy();
   });
 });

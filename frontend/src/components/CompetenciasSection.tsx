@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Section } from './Field';
+import { useLang } from '../i18n/LanguageContext';
 
 interface Props {
   competencias: string[];
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default function CompetenciasSection({ competencias, onChange }: Props) {
+  const { t } = useLang();
   const [input, setInput] = useState('');
 
   const add = () => {
@@ -20,11 +22,11 @@ export default function CompetenciasSection({ competencias, onChange }: Props) {
   const remove = (c: string) => onChange(competencias.filter((x) => x !== c));
 
   return (
-    <Section title="Competencias">
+    <Section title={t.form.skills}>
       <div className="chips-input">
         <input
           className="field-input"
-          placeholder="Escribe una competencia y presiona Enter"
+          placeholder={t.form.competencyPlaceholder}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
@@ -35,7 +37,7 @@ export default function CompetenciasSection({ competencias, onChange }: Props) {
           }}
         />
         <button type="button" className="btn btn-add" onClick={add}>
-          Agregar
+          {t.form.add}
         </button>
       </div>
       <div className="chips">
