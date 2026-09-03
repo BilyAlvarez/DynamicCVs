@@ -1,13 +1,13 @@
 :root {
-  --color-navy: #1F3B4D;
-  --color-accent: #2ABFBF;
-  --color-bg: #F4F6F8;
-  --color-text: #222222;
-  --color-sidebar: #1F3B4D;
-  --color-text-light: #FFFFFF;
+  --color-navy: #18181b;
+  --color-accent: #3f3f46;
+  --color-bg: #f4f4f5;
+  --color-text: #18181b;
+  --color-sidebar: #18181b;
+  --color-text-light: #ffffff;
 
   --font-base: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-  --radius: 8px;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --radius: 12px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
