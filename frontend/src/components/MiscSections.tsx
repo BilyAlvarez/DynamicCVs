@@ -1,13 +1,15 @@
-import type { HabilidadTecnica, Idioma, Certificacion } from '../types';
+import type { HabilidadTecnica, IdiomaNivel, Certificacion } from '../types';
 import Field, { Section } from './Field';
 import Repeatable from './Repeatable';
+import { useLang } from '../i18n/LanguageContext';
+import { NIVELES_IDIOMA } from '../data';
 
 interface Props {
   habilidades: HabilidadTecnica[];
-  idiomas: Idioma[];
+  idiomas: IdiomaNivel[];
   certificaciones: Certificacion[];
   onChangeHabilidades: (h: HabilidadTecnica[]) => void;
-  onChangeIdiomas: (i: Idioma[]) => void;
+  onChangeIdiomas: (i: IdiomaNivel[]) => void;
   onChangeCertificaciones: (c: Certificacion[]) => void;
 }
 
@@ -19,6 +21,7 @@ export default function MiscSections({
   onChangeIdiomas,
   onChangeCertificaciones,
 }: Props) {
+  const { t } = useLang();
   const updateH = (i: number, v: HabilidadTecnica) => {
     const next = [...habilidades];
     next[i] = v;
@@ -27,7 +30,7 @@ export default function MiscSections({
   const addH = () => onChangeHabilidades([...habilidades, { herramienta: '', descripcion: '' }]);
   const removeH = (i: number) => onChangeHabilidades(habilidades.filter((_, idx) => idx !== i));
 
-  const updateI = (i: number, v: Idioma) => {
+  const updateI = (i: number, v: IdiomaNivel) => {
     const next = [...idiomas];
     next[i] = v;
     onChangeIdiomas(next);
@@ -43,62 +46,64 @@ export default function MiscSections({
   const addC = () => onChangeCertificaciones([...certificaciones, { curso: '', institucion: '' }]);
   const removeC = (i: number) => onChangeCertificaciones(certificaciones.filter((_, idx) => idx !== i));
 
+  const levelOptions = NIVELES_IDIOMA.map((n) => ({ value: n, label: n }));
+
   return (
     <>
-      <Section title="Habilidades técnicas">
+      <Section title={t.form.technicalSkills}>
         {habilidades.map((h, i) => (
-          <Repeatable
-            key={i}
-            addLabel="Agregar habilidad"
-            onAdd={addH}
-            onRemove={() => removeH(i)}
-          >
+          <Repeatable key={i} addLabel={t.form.addSkill} onAdd={addH} onRemove={() => removeH(i)}>
             <div className="repeatable-group">
-              <Field label="Herramienta" value={h.herramienta} onChange={(v) => updateH(i, { ...h, herramienta: v })} />
-              <Field label="Descripción" value={h.descripcion} onChange={(v) => updateH(i, { ...h, descripcion: v })} />
+              <Field label={t.form.tool} value={h.herramienta} onChange={(v) => updateH(i, { ...h, herramienta: v })} />
+              <Field label={t.form.description} value={h.descripcion} onChange={(v) => updateH(i, { ...h, descripcion: v })} />
             </div>
           </Repeatable>
         ))}
         {habilidades.length === 0 && (
           <button type="button" className="btn btn-add" onClick={addH}>
-            + Agregar habilidad
+            + {t.form.addSkill}
           </button>
         )}
       </Section>
 
-      <Section title="Idiomas">
+      <Section title={t.form.languages}>
         {idiomas.map((m, i) => (
-          <Repeatable key={i} addLabel="Agregar idioma" onAdd={addI} onRemove={() => removeI(i)}>
+          <Repeatable key={i} addLabel={t.form.addLanguage} onAdd={addI} onRemove={() => removeI(i)}>
             <div className="fields-row">
-              <Field label="Idioma" value={m.nombre} onChange={(v) => updateI(i, { ...m, nombre: v })} />
-              <Field label="Nivel" value={m.nivel} onChange={(v) => updateI(i, { ...m, nivel: v })} />
+              <Field label={t.form.language} value={m.nombre} onChange={(v) => updateI(i, { ...m, nombre: v })} />
+              <Field
+                label={t.form.level}
+                value={m.nivel}
+                options={levelOptions}
+                onChange={(v) => updateI(i, { ...m, nivel: v })}
+              />
             </div>
           </Repeatable>
         ))}
         {idiomas.length === 0 && (
           <button type="button" className="btn btn-add" onClick={addI}>
-            + Agregar idioma
+            + {t.form.addLanguage}
           </button>
         )}
       </Section>
 
-      <Section title="Certificaciones">
+      <Section title={t.form.certifications}>
         {certificaciones.map((c, i) => (
           <Repeatable
             key={i}
-            addLabel="Agregar certificación"
+            addLabel={t.form.addCertification}
             onAdd={addC}
             onRemove={() => removeC(i)}
           >
             <div className="repeatable-group">
-              <Field label="Curso" value={c.curso} onChange={(v) => updateC(i, { ...c, curso: v })} />
-              <Field label="Institución" value={c.institucion} onChange={(v) => updateC(i, { ...c, institucion: v })} />
+              <Field label={t.form.course} value={c.curso} onChange={(v) => updateC(i, { ...c, curso: v })} />
+              <Field label={t.form.institution} value={c.institucion} onChange={(v) => updateC(i, { ...c, institucion: v })} />
             </div>
           </Repeatable>
         ))}
         {certificaciones.length === 0 && (
           <button type="button" className="btn btn-add" onClick={addC}>
-            + Agregar certificación
+            + {t.form.addCertification}
           </button>
         )}
       </Section>

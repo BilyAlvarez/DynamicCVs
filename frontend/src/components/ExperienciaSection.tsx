@@ -1,6 +1,7 @@
 import type { Experiencia } from '../types';
 import Field, { Section } from './Field';
 import Repeatable from './Repeatable';
+import { useLang } from '../i18n/LanguageContext';
 
 interface Props {
   experiencia: Experiencia[];
@@ -8,16 +9,14 @@ interface Props {
 }
 
 export default function ExperienciaSection({ experiencia, onChange }: Props) {
+  const { t } = useLang();
   const update = (i: number, v: Experiencia) => {
     const next = [...experiencia];
     next[i] = v;
     onChange(next);
   };
   const add = () =>
-    onChange([
-      ...experiencia,
-      { empresa: '', cargo: '', ciudad: '', fechas: '', funciones: [] },
-    ]);
+    onChange([...experiencia, { empresa: '', cargo: '', ciudad: '', fechas: '', funciones: [] }]);
   const remove = (i: number) => onChange(experiencia.filter((_, idx) => idx !== i));
 
   const updateFuncion = (i: number, fi: number, texto: string) => {
@@ -34,30 +33,22 @@ export default function ExperienciaSection({ experiencia, onChange }: Props) {
   };
   const removeFuncion = (i: number, fi: number) => {
     const next = [...experiencia];
-    next[i] = {
-      ...next[i],
-      funciones: next[i].funciones.filter((_, idx) => idx !== fi),
-    };
+    next[i] = { ...next[i], funciones: next[i].funciones.filter((_, idx) => idx !== fi) };
     onChange(next);
   };
 
   return (
-    <Section title="Experiencia laboral">
+    <Section title={t.form.experience}>
       {experiencia.map((e, i) => (
-        <Repeatable
-          key={i}
-          addLabel="Agregar experiencia"
-          onAdd={add}
-          onRemove={() => remove(i)}
-        >
+        <Repeatable key={i} addLabel={t.form.addExperience} onAdd={add} onRemove={() => remove(i)}>
           <div className="repeatable-group">
-            <Field label="Empresa" value={e.empresa} onChange={(v) => update(i, { ...e, empresa: v })} />
-            <Field label="Cargo" value={e.cargo} onChange={(v) => update(i, { ...e, cargo: v })} />
+            <Field label={t.form.company} value={e.empresa} onChange={(v) => update(i, { ...e, empresa: v })} />
+            <Field label={t.form.position} value={e.cargo} onChange={(v) => update(i, { ...e, cargo: v })} />
             <div className="fields-row">
-              <Field label="Ciudad" value={e.ciudad} onChange={(v) => update(i, { ...e, ciudad: v })} />
-              <Field label="Fechas" value={e.fechas} onChange={(v) => update(i, { ...e, fechas: v })} />
+              <Field label={t.form.city} value={e.ciudad} onChange={(v) => update(i, { ...e, ciudad: v })} />
+              <Field label={t.form.dates} value={e.fechas} onChange={(v) => update(i, { ...e, fechas: v })} />
             </div>
-            <h4 className="subsection-title">Funciones</h4>
+            <h4 className="subsection-title">{t.form.duties}</h4>
             {e.funciones.map((f, fi) => (
               <div key={fi} className="function-row">
                 <input
@@ -71,14 +62,14 @@ export default function ExperienciaSection({ experiencia, onChange }: Props) {
               </div>
             ))}
             <button type="button" className="btn btn-add" onClick={() => addFuncion(i)}>
-              + Agregar función
+              + {t.form.addFunction}
             </button>
           </div>
         </Repeatable>
       ))}
       {experiencia.length === 0 && (
         <button type="button" className="btn btn-add" onClick={add}>
-          + Agregar experiencia
+          + {t.form.addExperience}
         </button>
       )}
     </Section>
